@@ -1,0 +1,21 @@
+# Internal Atomberg documents (BRD, specs, backend asks) stay out of this public repo.
+documentation/
+
+# Dependencies and builds
+node_modules/
+dist/
+
+# Local environment and databases (backend/.gitignore also covers these)
+.env
+*.db
+*.db-journal
+
+# OS and editor clutter
+.DS_Store
+*.log
+
+# Tailwind docs snapshot: source-available, not open source, so not redistributed.
+# Re-sync locally with .claude/skills/tailwind-4-docs/scripts/sync_tailwind_docs.py.
+.claude/skills/tailwind-4-docs/references/docs/
+.claude/skills/tailwind-4-docs/references/docs-index.tsx
+.claude/skills/tailwind-4-docs/references/docs-source.txt

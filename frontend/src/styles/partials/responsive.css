@@ -1,0 +1,54 @@
+/* ---- Responsive ------------------------------------------------------------- */
+@media (max-width: 960px) {
+  .po-hero__grid { grid-template-columns: 1fr; gap: 32px; min-height: 0; padding-top: 40px; }
+  .po-hero__overlay { background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.6) 100%); }
+  .po-hero__title { max-width: 16ch; }
+  .po-reg.at-card { width: 100%; max-width: 520px; justify-self: center; }
+  .po-benefits, .po-network { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .po-steps { grid-template-columns: 1fr; gap: 28px; padding: 24px; }
+  .po-steps__image { aspect-ratio: 16 / 9; }
+  .po-quotes { grid-auto-columns: 100%; }
+}
+
+@media (max-width: 600px) {
+  .po-container { padding: 0 16px; }
+  .po-hide-sm { display: none; }
+  .po-header__bar { height: 60px; }
+  .po-header__nav { gap: 16px; }
+  .po-wordmark img { height: 24px; }
+  .po-hero__grid { padding-top: 32px; padding-bottom: 32px; gap: 24px; }
+  .po-hero__eyebrow { font-size: var(--at-text-xs); margin-bottom: 12px; }
+  .po-hero__title { margin-bottom: 16px; }
+  .po-hero__subtitle { font-size: var(--at-text-base); }
+  .po-reg.at-card { padding: 0 20px 24px; }
+  .po-section { padding: 32px 0; }
+  .po-benefits { gap: 16px; }
+  .po-benefit .po-bubble--xl { width: 72px; height: 72px; }
+  .po-benefit .po-bubble--xl .at-icon { width: 32px; height: 32px; }
+  .po-benefit__title { font-size: var(--at-text-base); }
+  .po-network { gap: 16px; }
+  .po-network__value { font-size: var(--at-text-2xl); }
+  .po-quote { padding: 24px; }
+  .po-quote__text { font-size: var(--at-text-base); }
+  .po-cta { padding: 24px; }
+  .po-cta .at-btn { width: 100%; }
+  .po-cta__title { font-size: var(--at-text-xl); }
+  .po-faq__item summary { font-size: var(--at-text-base); }
+}
+
+/* Short laptop screens (e.g. 1366×768): trim vertical space so the four
+   benefit points still show without scrolling */
+@media (min-width: 961px) and (max-height: 820px) {
+  .po-header__bar { height: 64px; }
+  .po-hero__grid { padding-top: 16px; padding-bottom: 14px; }
+  .po-hero__title { font-size: clamp(2.25rem, 4vw, 3.25rem); }
+  .po-reg__head { margin-bottom: 12px; }
+  .po-reg__form { gap: 10px; }
+  .po-benefits-section { padding-top: 20px; }
+  .po-bubble--xl { width: 68px; height: 68px; }
+}
+
+/* Narrow phones: keep the logo and FAQs link on one line */
+@media (max-width: 480px) {
+  .po-header .po-wordmark__suffix { display: none; }
+}

@@ -1,0 +1,79 @@
+# Changelog
+
+All notable changes to **partnerOnboarding** are documented here.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+> **How to release**
+> 1. Move items from `Unreleased` into a new `## [x.y.z] - YYYY-MM-DD` section.
+> 2. Bump the version to match (MAJOR breaking · MINOR feature · PATCH fix).
+
+## [Unreleased]
+
+### Added
+- **Lead list rows now include the previous status.** `GET /api/internal/leads` returns `previousStatusCode`, the status a lead was in before its current one (null if there is none). The CRM uses it to show where an applicant was rejected, such as "Rejected at ASM screening" instead of just "Rejected at screening".
+- **The CRM can now list onboarding applicants from this project's database.** A new read-only API, `GET /api/internal/leads` and `GET /api/internal/leads/:id`, returns applicants with their area, products, current status and full status history. atlas-frontend's Partner Management → Onboarding pages read from it through its dev proxy. It has no login check, so it only runs when `INTERNAL_API_ENABLED=true`, and the API refuses to start with that set in production. Details and the asks for the CRM backend team are in `documentation/onboarding-internal-api.md`.
+- **Every lead now keeps a status history.** Each status change is a new row in `LeadStatusEvent`, recording the status, who made the change (applicant, system or an internal role), an optional reason, and when. Registration writes the first row. Leads that already existed were given one row for their current status. Leads also gained two empty fields for later steps: the partner type, decided in screening, and the CRM partner account created at S14.
+- **Demo applicants at every onboarding stage, for building the CRM screens.** `npm run db:seed:demo` creates 22 named applicants, from just-registered to live, including rejected, on-hold, re-training, integration-failure, discrepancy, trainer-rejection and failed-delivery cases. They are marked as demo data and timed relative to now. Rerunning the command replaces them; real registrations are never touched. Development only.
+
+### Changed
+- **The OTP field and the success screen now fade in.** After "Get OTP", the mobile number glides to half width and the OTP boxes fade in beside it. After "Verify & register", the form fades out and the thank-you panel fades in. The card stays the same size. This uses the browser's View Transition API through React 19.3's `<ViewTransition>`. Browsers without it, and visitors who ask for reduced motion, see the change instantly as before.
+- **The OTP is entered in four rounded boxes.** After "Get OTP", four boxes appear next to the mobile number, one per digit. The next box to fill is outlined, and the boxes turn red on an OTP error. Underneath they are a single field, so SMS autofill, paste and backspace work as usual and screen readers announce one "OTP" field. The card stays the same size.
+- **The success screen no longer repeats the phone number or promises a call.** "What happens next" now reads "Our team will reach out to you for a short screening. Keep your reference number handy."
+- **The registration card no longer changes size when "Get OTP" is clicked.** The OTP field used to appear in a new box under the mobile number, which made the card and the hero photo taller. Now no OTP field shows until "Get OTP" is clicked. The mobile number fills the row, then shrinks to half width and the OTP field appears beside it, in the same row and at the same height. A single line under the row reads "We'll send a 4-digit OTP to this number." before the OTP is sent. Afterwards it shows "Sent to +91 … Change" with the resend countdown on the right, or the mobile or OTP error. The hero and the four benefit titles still fit on the first screen at 1366×768.
+- **Benefit icons are now solid, glossy yellow badges.** The four benefit icons, and the tick on the "registration done" screen, used a faint yellow bloom on white. They are now solid brand-yellow circles with a soft top highlight and a black icon, and no glow.
+- **"Become a partner in 3 easy steps" is now a vertical timeline.** Each step has a solid yellow numbered badge, and a continuous line joins the badges. The card is the same size as before.
+- **The page uses relevant photos instead of random ones.** The hero shows an electrician at work, the steps card shows a trainer briefing technicians in hard hats at a machine, and the network tiles show a technician, an Indian city skyline and panel testing. The "4 product categories" tile is a 2×2 collage of the real Atomberg fan, water purifier, kitchen appliance and smart lock photos. These are free Unsplash stock photos stored in `frontend/public/images/`, so the page no longer loads images from picsum.photos. They are still placeholders and must be replaced with approved photos before launch.
+- **Testimonials show sample names and portraits.** "Partner name" is replaced with made-up names (Rohan Deshmukh, Vikram Sharma, Karthik Subramanian, Alok Srivastava) and stock portraits. The quotes and names are samples and must be replaced before launch.
+- **The product tiles show real Atomberg product photos.** Fans, water purifiers, kitchen appliances and smart locks now use the supplied product shots. Each product is shown whole on a white tile, with its name below. The kitchen photo was supplied as AVIF, so a WebP copy (`kitchenAppliances.webp`) is used for browsers that can't show AVIF. The original file is kept.
+- **The hero and the four benefits now fit on the first screen, like Swiggy's page.** The registration card is about 490px tall instead of about 790px:
+  - Fields show their prompt inside the box ("Enter your full name", "Select state", "Select city", "Enter your mobile number") instead of a label above it. Screen readers still announce each field's name.
+  - State and city sit side by side.
+  - The "No documents needed to register" line and the firm-name hint are gone.
+  - The consent line is shorter.
+
+  The benefit icons and titles are visible without scrolling at 1366×768 and larger screens.
+- **The FAQ now lines up with the rest of the page.** It previously sat in a narrower, indented column.
+- **The yellow buttons are back to their original colour, and darken only slightly on hover.** The earlier hover tint turned them a dull brown. They now shift to a slightly deeper, still-bright yellow.
+- **Applicants now pick one city from a dropdown, the same way they pick their state.** Before, they selected any number of cities from a box of options. This takes less space and gives each lead exactly one city. The city dropdown reads "Select a state first" until a state is chosen, and clears when the state changes. The API now takes a single `cityId` instead of a `cityIds` list. The database migration drops the old lead-to-city table, so registrations created before this change can't be migrated. There weren't any.
+- **Products are picked from square image tiles instead of text pills.** Each product (Fans, Water purifiers, Kitchen appliances, Smart locks) shows a square photo with its name below and a round checkbox in the top-right corner. The checkbox fills yellow with a black tick when the tile is selected. Clicking anywhere on the tile toggles it, and it also works with Tab and Space. The photos are placeholders until real product images are provided.
+- **The homepage now follows the Swiggy partner page design.**
+  - The header is a plain white bar with the Atomberg logo on the left and "How it works" and "FAQs" on the right. The Register button is gone, since the form is right there in the hero.
+  - The hero is an edge-to-edge photo with a dark overlay. A large, light-weight white headline reads "Put your skills to work with **Atomberg.**", with "Atomberg." in bold brand yellow.
+  - The registration form is a solid white card on the right, with the Atomberg logo mark on its top edge and a centred title.
+  - Further down, the benefit icons are larger, the 3 steps sit on a warm yellow-tinted card with ringed step numbers, and testimonials have large bold quote marks.
+  - On phones, the headline sits over the photo with the form card below it.
+- **Buttons and selected options are now solid Atomberg yellow.** Previously "Get OTP", "Register", "Get started" and the selected products and cities showed faint, patchy yellow on white. Buttons now have a solid yellow base with softly moving highlights, and selected chips have a full yellow fill. Text on both stays black.
+- **The yellow highlighter is now only in the main headline.** "Atomberg." in the hero keeps it. "Become a partner in 3 easy steps" and "Join a growing service network" are now plain headings.
+- **The "Sample figures" and "Sample testimonial" labels are gone from the page.** The figures and quotes are still made up, and must be replaced in `frontend/src/content/placeholders.ts` before launch.
+- **The registration site now uses Atomberg's brand: yellow with black text and the real logo.** The header and footer show the Atomberg logo, and the registration card and browser tab show the logo mark. Buttons, selected options, icon circles and step numbers use brand yellow (`#F2BB44`), and all text is black. Yellow is never used for text, because it is unreadable on the light background. Instead, the brand words in headings ("Atomberg.", "3 easy steps", "service network") get a yellow highlighter stroke, and links get a yellow underline. Selected products and cities now also have a black outline, so they are easy to tell apart from unselected ones.
+- **The page now speaks to individual technicians and engineers, not just service businesses.** The headline is "Put your skills to work with Atomberg." instead of "Grow your service business with Atomberg.", and the label above it reads "For technicians and engineers". The name field asks for "Your full name" (example "Ravi Kumar"), with a hint that firms can enter their firm's name instead. The FAQ "Who can register?" now leads with individual technicians and engineers, and the sample testimonials come mostly from technicians and engineers.
+
+### Removed
+- **The "By registering, you agree that Atomberg may call you." line under the button is gone.**
+- **The "Demo mode" OTP badge is gone, so the page looks like production.** The yellow badge that showed the mock OTP after "Get OTP" no longer appears. Testers still use `1234` while `OTP_PROVIDER=mock`.
+
+### Fixed
+- **Screen-reader and keyboard users no longer lose their place in the form.** While an OTP was being sent or a registration submitted, the button was disabled, which dropped focus to the top of the page, for example when the API answered "Please wait 29 seconds". The button now stays focused while it is busy. After a successful registration, focus moves to the "Thank you" heading, so it is read out, instead of being lost when the form disappears.
+- **No API validation message is silently dropped.** If the API reported an error for a field the form doesn't show (for example `productCodes.0`), nothing appeared. Such errors now show as a form-level message.
+- **The registration form no longer changes height when you pick a different state.** The city list is now a fixed-height box. It scrolls when a state has more cities than fit, so the rest of the form stays put.
+- **The top bar fits on phones.** On narrow screens the "PARTNERS" label overlapped the Register button. It now hides below 480px wide, and the logo shrinks slightly on phones. Checked at 320, 360, 390, 480, 600 and 768px wide.
+
+### Added
+- **Frontend lint (`npm run lint`).** ESLint with the same rules as atlas-frontend: recommended JavaScript and TypeScript rules, React hooks rules (missing effect dependencies are errors) and Vite fast-refresh checks. It also stops components from calling the API client directly, so every endpoint goes through `src/services/`.
+- **Demo video script for prospective buyers (2026-11-03).** `documentation/partner-onboarding-demo-script.md` is a 5-minute product preview of Partner Onboarding, which we are building with Atomberg as the reference customer. It is written for an organisation evaluating whether to buy. It opens with a diagram of the journey: 7 phases, 3 hard gates and pluggable integrations. The script then runs Problem, Extent, the journey, built-in controls, life after go-live, measurable outcomes, and the roadmap. It is based on the BRD, leaves out internal codes, open items, deposit amounts and dates, and claims nothing is live.
+- **Partners can register themselves on a public website (FR-01).** Anyone can open the site without logging in. The applicant enters their name or firm name, the Atomberg products they can service (fans, water purifiers, kitchen appliances, smart locks), their state and the cities they cover, and their mobile number. They then confirm the number with an OTP. On success they get a reference number such as `ATB-7K3M9Q2X` and are told the team will call them for screening. Behind the scenes, each registration becomes a lead with status `ST-100 Registered`. A mobile number that's already registered is refused with "This mobile number is already registered." This only happens after OTP verification, so nobody can check whether someone else's number is registered. A number in the Blocked Partner Master is saved as `ST-403 On hold`, and the applicant sees the normal confirmation. The page follows the Swiggy partner layout but is styled with Atomberg UI, and works on phones. Known limits:
+  - **The OTP is mocked:** always `1234`, and no SMS is sent.
+  - **Lead qualification (FR-02) isn't decided yet,** so every lead starts as Registered.
+  - **Content is placeholder:** images, network figures and testimonials are samples, marked on the page with "Sample" badges.
+
+  Details: `documentation/fr-01-self-registration.md`.
+- **Project set up for Claude Code (2026-11-02).** `CLAUDE.md` covers the repository layout, which project skill to use for what, and documentation conventions. `.claude/skills/` holds eight skills: six from atlas-frontend (code review, security, React/TypeScript review, advanced types, React performance, design exploration) and two from elsewhere on the Desktop (web design guidelines, Tailwind v4 docs).
+- **Documentation folder.** `documentation/` holds specs, integration notes and backend asks, with an index in `documentation/README.md`.
+- **Partner Onboarding BRD v2.0 in Markdown (2026-11-02).** `documentation/BRD_Partner_Onboarding.md` is converted from `BRD_Partner_Onboarding_CRM_v2.0.docx` (BRD/CRM/PO/2026/02, dated 05 Aug 2026). It covers the 19-step onboarding journey, access control, the partner status master, change requests, performance control, offboarding and promotion. Its five figures are in `documentation/assets/brd-partner-onboarding/`.
+
+### Security
+- **Wrong OTP guesses sent in parallel can no longer exceed the attempt limit.** Before, the API checked the attempt count and then recorded a wrong guess in two separate steps, so guesses sent at the same time each passed the check. A test showed 8 attempts against a limit of 5. Each attempt is now counted in one atomic update before the code is compared. A regression test covers this.
+- **The API refuses to start with the mock OTP in production.** The mock accepts `1234` for every number and returns it in the response, so anyone could register a mobile number they don't own. With `NODE_ENV=production` and `OTP_PROVIDER=mock`, the backend now exits with an error. Production needs a real SMS gateway (INT-07).
+- **The page no longer connects to picsum.photos.** A leftover `preconnect` hint opened a connection to the old placeholder image host on every visit, though no images come from there any more.

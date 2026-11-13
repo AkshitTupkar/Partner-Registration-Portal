@@ -1,0 +1,5 @@
+/* ---- Footer: light strip (the logo's black lettering needs a light ground) */
+.po-footer { padding: 32px 0 40px; border-top: 1px solid var(--at-hairline); background: var(--at-paper-2); }
+.po-footer__inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.po-footer__inner .at-help { margin: 4px 0 0; }
+.po-footer__copy { width: 100%; }

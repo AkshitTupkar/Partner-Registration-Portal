@@ -1,0 +1,131 @@
+// Partner Onboarding — data model for step S1 (self-registration, FR-01).
+// Field refs (F-xx), rules (BR-xx) and status codes (ST-xxx) point to
+// documentation/BRD_Partner_Onboarding.md.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ---- Masters -------------------------------------------------------------
+
+/// Product master (F-04). Drives lead qualification and later product mapping.
+model Product {
+  code      String        @id
+  name      String
+  sortOrder Int           @default(0)
+  active    Boolean       @default(true)
+  leads     LeadProduct[]
+}
+
+/// Area master, state level (F-05).
+model State {
+  code   String @id
+  name   String
+  cities City[]
+  leads  Lead[]
+}
+
+/// Area master, city level (F-05).
+model City {
+  id        Int     @id @default(autoincrement())
+  name      String
+  stateCode String
+  active    Boolean @default(true)
+  state     State   @relation(fields: [stateCode], references: [code])
+  leads     Lead[]
+
+  @@unique([stateCode, name])
+}
+
+/// Blocked Partner Master (BR-08). Checked at registration and again at
+/// document verification. Only the mobile number is known at registration.
+model BlockedPartner {
+  id        Int      @id @default(autoincrement())
+  mobile    String?  @unique
+  pan       String?  @unique
+  aadhaar   String?  @unique
+  gst       String?  @unique
+  reason    String
+  blockedAt DateTime @default(now())
+}
+
+// ---- Registration --------------------------------------------------------
+
+/// One OTP challenge per send. The code itself is never stored, only a hash.
+model OtpChallenge {
+  id         String    @id @default(cuid())
+  mobile     String
+  codeHash   String
+  expiresAt  DateTime
+  attempts   Int       @default(0)
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([mobile, createdAt])
+}
+
+/// An onboarding applicant, from self-registration (S1) onwards. statusCode is the
+/// current Partner Status Master code (Section 12) and always equals the latest
+/// LeadStatusEvent; the events hold the history.
+model Lead {
+  id               String        @id @default(cuid())
+  referenceNumber  String        @unique
+  name             String
+  /// Primary mobile (F-02). Unique: a duplicate blocks onboarding (BR-06).
+  mobile           String        @unique
+  mobileVerifiedAt DateTime
+  stateCode        String
+  state            State         @relation(fields: [stateCode], references: [code])
+  /// Area coverage (F-05): one city in the state.
+  cityId           Int
+  city             City          @relation(fields: [cityId], references: [id])
+  statusCode       String
+  /// "WEB" for the public site; "DEMO" for rows from prisma/seed-demo-leads.ts.
+  source           String        @default("WEB")
+  /// Partner type (BRD 4.3): ASP_OWNER, ASP_COORDINATOR, ENG, TECHNICIAN or MASP.
+  /// Not asked at S1; decided during screening, so null until then. Drives which
+  /// steps apply (table 6.1).
+  userType         String?
+  /// CRM partner account created at S14. A stand-in until the CRM backend owns
+  /// the lead-to-partner link.
+  partnerId        String?
+  products         LeadProduct[]
+  statusEvents     LeadStatusEvent[]
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([statusCode])
+  @@index([stateCode])
+  @@index([cityId])
+}
+
+model LeadProduct {
+  leadId      String
+  productCode String
+  lead        Lead    @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  product     Product @relation(fields: [productCode], references: [code])
+
+  @@id([leadId, productCode])
+}
+
+/// Status history (BRD Section 12): one row each time a lead's status changes,
+/// never updated or deleted. Gives the onboarding tracker when each step started
+/// and ended (SLA, FR-28), who moved it and why (BR-17).
+model LeadStatusEvent {
+  id         String   @id @default(cuid())
+  leadId     String
+  lead       Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  statusCode String
+  /// Who caused the change: APPLICANT, SYSTEM, or the internal role that acted.
+  actor      String
+  /// Mandatory on rejections and holds (BR-17); optional otherwise.
+  reason     String?
+  createdAt  DateTime @default(now())
+
+  @@index([leadId, createdAt])
+}

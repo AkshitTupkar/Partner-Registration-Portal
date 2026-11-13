@@ -1,0 +1,12 @@
+/* Page styles for the partner registration site, one partial per area of the
+   page. Visual language comes from Atomberg UI tokens (--at-*); classes are
+   prefixed po-. Order matters: responsive overrides must come after the base
+   rules they override. Colours come from theme.css only (see CLAUDE.md). */
+@import "./partials/base.css";
+@import "./partials/header.css";
+@import "./partials/hero.css";
+@import "./partials/registration.css";
+@import "./partials/sections.css";
+@import "./partials/footer.css";
+@import "./partials/responsive.css";
+@import "./partials/view-transitions.css";

@@ -1,0 +1,126 @@
+/* ---- Registration card ---------------------------------------------------- */
+/* Solid white card with the logo mark sitting on its top edge (Swiggy-style) */
+.po-reg.at-card {
+  background: #fff; border: 0; border-radius: 20px;
+  box-shadow: 0 24px 60px -12px rgba(0,0,0,0.35);
+  backdrop-filter: none; -webkit-backdrop-filter: none;
+  margin-top: 28px; padding: 0 24px 20px;
+  scroll-margin-top: 110px;
+}
+.po-reg__logo {
+  display: block; width: 56px; height: 56px; margin: -28px auto 0;
+  border-radius: 14px; box-shadow: 0 8px 20px -6px rgba(0,0,0,0.35);
+}
+.po-reg__head { display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 16px; }
+.po-reg__head .po-reg__logo { margin-bottom: 10px; }
+.po-reg__title { font-size: var(--at-text-lg); font-weight: 650; letter-spacing: var(--at-tracking-tight); margin: 0; }
+.po-reg__form { display: flex; flex-direction: column; gap: 12px; }
+.po-reg__form .at-field { gap: 6px; }
+/* State and city share a row */
+.po-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; align-items: start; }
+.po-row .at-select { text-overflow: ellipsis; }
+.po-reg__loading { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 40px 0; }
+.po-reg__submit { width: 100%; margin-top: 4px; }
+.po-reg__submit[aria-disabled="true"] { cursor: progress; }
+.po-fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.po-fieldset legend { padding: 0; margin-bottom: 8px; }
+.po-fieldset legend + * { margin-top: 0; }
+
+/* Product tiles: square photo, round yellow check top-right, name below */
+.po-products { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.po-product { position: relative; display: flex; flex-direction: column; gap: 5px; cursor: pointer; }
+.po-product__input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.po-product__media {
+  position: relative; display: block; aspect-ratio: 1; overflow: hidden; background: #fff;
+  border-radius: 14px; border: 2px solid transparent;
+  box-shadow: 0 0 0 1px var(--at-hairline);
+  transition: border-color var(--at-dur-fast) ease, box-shadow var(--at-dur-fast) ease;
+}
+/* Product shots on white: show the whole product, never cropped */
+.po-product__media img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+.po-product:hover .po-product__media { box-shadow: 0 0 0 1px var(--at-hairline-strong), var(--at-shadow-1); }
+.po-product__check {
+  position: absolute; top: 6px; right: 6px;
+  width: 22px; height: 22px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: rgba(255,255,255,0.95); border: 1.5px solid var(--at-hairline-strong);
+  color: transparent; box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  transition: background var(--at-dur-fast) ease, color var(--at-dur-fast) ease;
+}
+/* Two-line slot so tiles line up whether or not a name wraps */
+.po-product__name {
+  min-height: 2.4em; font-size: 0.6875rem; font-weight: 500; line-height: 1.2;
+  color: var(--at-ink); text-align: center;
+}
+.po-product--checked .po-product__name { font-weight: 650; }
+.po-product--checked .po-product__media {
+  border-color: var(--at-accent-edge);
+  box-shadow: 0 6px 16px -6px rgb(var(--at-accent-rgb) / 0.9);
+}
+.po-product--checked .po-product__check { background: var(--at-accent); border-color: var(--at-accent-edge); color: var(--at-ink); }
+.po-product:has(.po-product__input:focus-visible) .po-product__media { outline: 2px solid var(--at-focus); outline-offset: 2px; }
+
+.at-select:disabled { cursor: not-allowed; color: var(--at-ink-3); background-color: var(--at-well); }
+.at-select {
+  appearance: none; -webkit-appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234a5266' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 16px center;
+  padding-right: 42px;
+}
+
+.po-phone { position: relative; }
+.po-phone__prefix {
+  position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+  font-size: var(--at-text-sm); font-weight: 600; color: var(--at-ink-2); pointer-events: none;
+}
+.po-phone .at-input { padding-left: 54px; }
+.po-phone .at-input[readonly] { background: var(--at-well); color: var(--at-ink-2); }
+
+/* Mobile + OTP row. The OTP field appears beside the mobile number after "Get OTP" (same
+   row height), and the note under the row is always there, so the card height never jumps. */
+.po-verify { display: flex; flex-direction: column; gap: 6px; }
+/* OTP: four rounded boxes, with one transparent input laid over them (see OtpInput.tsx).
+   The row stretches the boxes to the mobile input's height, so the row height doesn't change. */
+.po-verify .po-row { align-items: stretch; }
+.po-otp { position: relative; flex: 1; min-height: 40px; }
+.po-otp__input {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0; border: 0; padding: 0; margin: 0; cursor: text;
+  font-size: 16px; /* stops iOS zooming in on focus */
+}
+.po-otp__boxes { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; height: 100%; pointer-events: none; }
+.po-otp__box {
+  display: grid; place-items: center;
+  border: 1px solid var(--at-hairline); border-radius: var(--at-radius-sm);
+  background: rgba(255,255,255,0.75); box-shadow: var(--at-emboss-deep);
+  font-size: var(--at-text-lg); font-weight: 600; color: var(--at-ink);
+  transition: border-color var(--at-dur-fast) ease, box-shadow var(--at-dur-fast) ease;
+}
+.po-otp__box--filled { border-color: var(--at-hairline-strong); }
+.po-otp__box--active { border-color: var(--at-focus); box-shadow: 0 0 0 3px rgb(var(--at-accent-rgb) / 0.20), var(--at-emboss-deep); }
+.po-otp--error .po-otp__box { border-color: var(--at-rose-deep); }
+.po-otp--error .po-otp__box--active { box-shadow: 0 0 0 3px rgba(217,138,140,0.2), var(--at-emboss-deep); }
+.po-verify__note {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px;
+  min-height: 1.5em; line-height: 1.5;
+}
+.po-verify__resend { white-space: nowrap; }
+
+.po-form-error {
+  display: flex; gap: 8px; align-items: center; margin: 0;
+  font-size: var(--at-text-sm); color: var(--at-rose-deep);
+  padding: 10px 14px; border-radius: var(--at-radius-md); background: var(--at-rose-wash);
+}
+
+.po-reg__done { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 12px 0; }
+.po-reg__done .at-h3 { margin: 8px 0 0; }
+.po-ref {
+  display: flex; flex-direction: column; gap: 4px; margin: 12px 0;
+  padding: 14px 24px; border-radius: var(--at-radius-md);
+  background: #fff; border: 1px dashed var(--at-hairline-strong);
+}
+.po-ref__value { font-family: var(--at-font-mono); font-size: var(--at-text-xl); font-weight: 600; letter-spacing: 0.06em; }
+.po-reg__next-title { font-size: var(--at-text-sm); font-weight: 650; margin: 8px 0 0; }
+
+/* The success heading takes focus programmatically (it is not interactive), so no ring. */
+.po-reg__done-title:focus { outline: none; }

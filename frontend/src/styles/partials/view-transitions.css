@@ -1,0 +1,28 @@
+/* ---- View transitions ------------------------------------------------------
+   Used by <ViewTransition> in components/registration: the OTP field fades in
+   beside the mobile number, and the form fades out to the success panel.
+   Only state changes made in a React transition animate; browsers without the
+   View Transition API simply skip them. */
+:root {
+  --po-vt-exit: 150ms;
+  --po-vt-enter: 210ms;
+}
+
+@keyframes po-vt-fade { from { opacity: 0; } to { opacity: 1; } }
+
+::view-transition-old(.po-vt-fade-out) { animation: var(--po-vt-exit) ease-in both reverse po-vt-fade; }
+::view-transition-new(.po-vt-fade-in) { animation: var(--po-vt-enter) ease-out var(--po-vt-exit) both po-vt-fade; }
+
+/* Keep the rest of the page live: no root cross-fade, and clicks pass through. */
+::view-transition-old(root) { display: none; }
+::view-transition-new(root) { animation: none; }
+::view-transition { pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}

@@ -1,0 +1,22 @@
+/* ---- Header: plain white bar (Swiggy-style) ----------------------------- */
+.po-header {
+  position: sticky; top: 0; z-index: 20;
+  background: #fff; border-bottom: 1px solid var(--at-hairline);
+}
+.po-header__bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 72px; }
+.po-header__nav { display: flex; align-items: center; gap: 28px; }
+.po-header__link {
+  color: var(--at-ink); text-decoration: none; font-size: var(--at-text-base); font-weight: 500;
+  padding: 6px 0; border-bottom: 2px solid transparent;
+}
+.po-header__link:hover { border-bottom-color: var(--at-accent); }
+.po-header__link:focus-visible { outline: 2px solid var(--at-focus); outline-offset: 4px; border-radius: 4px; }
+.po-wordmark { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; color: var(--at-ink); min-width: 0; }
+.po-wordmark img { height: 30px; width: auto; }
+.po-wordmark__suffix {
+  font-size: var(--at-text-xs); font-weight: 600; letter-spacing: var(--at-tracking-label);
+  text-transform: uppercase; color: var(--at-ink-2);
+  padding-left: 10px; border-left: 1px solid var(--at-hairline-strong); line-height: 1.4;
+}
+.po-wordmark:focus-visible { outline: 2px solid var(--at-focus); outline-offset: 4px; border-radius: 6px; }
+.po-lang { width: auto; padding: 6px 14px; }

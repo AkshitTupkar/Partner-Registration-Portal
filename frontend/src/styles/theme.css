@@ -1,0 +1,46 @@
+/* Atomberg brand theme: the one place brand colours are set.
+   Loaded after the Atomberg UI tokens and overrides them.
+   Brand: yellow #F2BB44 with black text. Yellow is only ever a fill, wash or
+   highlight: as text or a focus ring on the light ground it is ~1.8:1, which is
+   unreadable, so text and focus use ink. The matching smoke pigment is the
+   "atomberg" preset in vendor/atomberg-ui/pigments.js (set in App.tsx). */
+
+:root {
+  --at-accent: #f2bb44;
+  --at-accent-2: #ffcf3f;
+  --at-accent-rgb: 242 187 68;
+  --at-accent-2-rgb: 255 207 63;
+  --at-accent-wash: rgba(242, 187, 68, 0.2);
+  /* Dark amber for the rare text that must read as "brand" (≈7:1 on white) */
+  --at-accent-deep: #7a5200;
+
+  /* Black text; neutral greys instead of the default navy-tinted ones */
+  --at-ink: #1a1a1a;
+  --at-ink-2: #4d4d4d;
+  --at-ink-3: #6b6b6b;
+
+  /* Slightly darker yellow for edges of yellow-filled controls */
+  --at-accent-edge: #d9a22e;
+  /* Clean deeper yellow laid over yellow buttons on hover and press
+     (a saturated amber, so the button darkens without turning muddy) */
+  --at-accent-press: #d4920f;
+
+  --at-focus: var(--at-ink);
+  --at-on-accent: var(--at-ink);
+}
+
+/* Primary buttons sit on solid brand yellow (matches the `atomberg` pigment's
+   paper), so there is no white flash before the smoke canvas paints. */
+.at-btn--smoke-light {
+  background: var(--at-accent);
+  border-color: var(--at-accent-edge);
+}
+/* Slightly darker on hover, a little more on press. A tint over the smoke canvas, under the label (z-index 1). */
+.at-btn--smoke-light::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit;
+  background: var(--at-accent-press); opacity: 0; pointer-events: none;
+  transition: opacity var(--at-dur-fast) ease;
+}
+.at-btn--smoke-light:hover:not(:disabled)::after { opacity: 0.35; }
+.at-btn--smoke-light:active:not(:disabled)::after { opacity: 0.55; }
+

@@ -1,0 +1,25 @@
+/* ---- Hero: edge-to-edge photo with dark overlay (Swiggy-style) ------------ */
+.po-hero { position: relative; isolation: isolate; overflow: hidden; background: #1a1a1a; }
+.po-hero__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; z-index: -2; }
+.po-hero__overlay {
+  position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(90deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0.2) 100%);
+}
+.po-hero__grid {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 400px);
+  gap: 48px; align-items: center;
+  padding-top: 28px; padding-bottom: 32px;
+}
+.po-hero__eyebrow {
+  display: block; margin-bottom: 16px;
+  font-size: var(--at-text-sm); font-weight: 600; letter-spacing: var(--at-tracking-label);
+  text-transform: uppercase; color: rgba(255,255,255,0.8);
+}
+.po-hero__title {
+  margin: 0 0 20px; max-width: 13ch;
+  font-size: clamp(2.25rem, 4.4vw, 3.75rem); font-weight: 300; line-height: 1.1;
+  letter-spacing: -0.02em; color: #fff;
+}
+/* Yellow on the dark overlay reads well (~10:1), unlike on light grounds */
+.po-hero__accent { font-weight: 700; color: var(--at-accent); }
+.po-hero__subtitle { margin: 0; max-width: 44ch; font-size: var(--at-text-lg); color: rgba(255,255,255,0.88); }
