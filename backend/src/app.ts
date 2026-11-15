@@ -1,3 +1,4 @@
+import path from "node:path";
 import cors from "cors";
 import express from "express";
 import { rateLimit } from "express-rate-limit";
@@ -23,6 +24,10 @@ function limiter(limit: number) {
 export function createApp() {
   const app = express();
 
+  // Behind a host's proxy every request arrives from the proxy's address. Without
+  // this, all visitors would share one rate-limit bucket.
+  if (config.TRUST_PROXY) app.set("trust proxy", config.TRUST_PROXY);
+
   app.use(helmet());
   const origins = config.CORS_ORIGIN.split(",").map((o) => o.trim()).filter(Boolean);
   if (origins.length) app.use(cors({ origin: origins }));
@@ -36,6 +41,17 @@ export function createApp() {
   app.use("/api/registrations", limiter(20), registrationsRouter);
   // Dev-only read API for the CRM; see INTERNAL_API_ENABLED in config.ts.
   if (config.INTERNAL_API_ENABLED) app.use("/api/internal/leads", internalLeadsRouter);
+
+  // Single-service deploys: serve the built registration site next to the API.
+  // Unknown /api paths still fall through to the JSON 404 below.
+  if (config.STATIC_DIR) {
+    const dir = path.resolve(config.STATIC_DIR);
+    app.use(express.static(dir));
+    app.use((req, res, next) => {
+      if (req.method !== "GET" || req.path.startsWith("/api")) return next();
+      res.sendFile(path.join(dir, "index.html"));
+    });
+  }
 
   app.use(notFound);
   app.use(errorHandler);

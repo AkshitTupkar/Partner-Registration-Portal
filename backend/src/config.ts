@@ -11,6 +11,10 @@ const EnvSchema = z.object({
   OTP_RESEND_COOLDOWN_SECONDS: z.coerce.number().int().nonnegative().default(30),
   OTP_MAX_ATTEMPTS: z.coerce.number().int().positive().default(5),
   OTP_HASH_SECRET: z.string().min(1).default("dev-only-change-me"),
+  /** Folder with the built registration site (frontend/dist). When set, the API serves it too, so one service hosts both. */
+  STATIC_DIR: z.string().default(""),
+  /** Number of reverse proxies in front of the API (1 on Render, Railway and similar). Rate limits need it to see the visitor's IP. */
+  TRUST_PROXY: z.coerce.number().int().nonnegative().default(0),
   /** Serves /api/internal/* (lead list and detail for the CRM). No auth yet: dev only. */
   INTERNAL_API_ENABLED: z
     .enum(["true", "false"])

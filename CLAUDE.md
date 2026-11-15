@@ -16,6 +16,7 @@ Backend (`cd backend`):
 - Tests: `npm test` (Vitest + Supertest; rebuilds `prisma/test.db` from migrations, never touches `dev.db`)
 - New migration after editing `prisma/schema.prisma`: `npx prisma migrate dev --name <change>`
 - Seed masters: `npm run db:seed`
+- Hosted demo start: `npm run start:demo` (migrate, seed masters and demo applicants, then start; used by the root `Dockerfile`, see README "Deploy a demo")
 - Seed demo applicants at every onboarding stage: `npm run db:seed:demo` (dev only; replaces earlier demo rows)
 
 Frontend (`cd frontend`):
