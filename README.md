@@ -39,10 +39,13 @@ Set these variables on the host:
 | `INTERNAL_API_ENABLED` | `true`, if atlas-frontend's onboarding pages should read this database |
 | `CORS_ORIGIN` | the atlas-frontend origin that will call the API, for example `https://dev.example.com` |
 | `OTP_HASH_SECRET` | any long random string |
+| `DEMO_GATE_EMAIL`, `DEMO_GATE_PASSWORD` | optional: the site asks for this email and password before showing the registration page |
 
 Leave `NODE_ENV` unset. The mock OTP and the internal API both refuse to start in production.
 
 On every start the service applies the migrations, seeds the masters and recreates the 22 demo applicants. The database file lives inside the container, so registrations made on the hosted site are lost on the next deploy or restart unless the host mounts a persistent disk over `backend/prisma`.
+
+The demo gate only stops someone who opens the link by accident from seeing the page. The browser remembers a passed check, and the API behind the page stays open. Set the gate's credentials on the host only, never in this repo, which is public.
 
 This is a demo setup, not a production one: the OTP is always 1234, and `/api/internal/leads` returns applicants' names and mobile numbers to anyone who has the URL. Use demo data only and take the service down when the demo is over.
 

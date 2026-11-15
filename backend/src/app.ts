@@ -7,6 +7,7 @@ import { config } from "./config.js";
 import { errorHandler, notFound } from "./lib/errors.js";
 import { mastersRouter } from "./routes/masters.js";
 import { otpRouter } from "./routes/otp.js";
+import { demoGateRouter } from "./routes/demo-gate.js";
 import { internalLeadsRouter } from "./routes/internal-leads.js";
 import { registrationsRouter } from "./routes/registrations.js";
 
@@ -36,6 +37,7 @@ export function createApp() {
   app.get("/api/health", (_req, res) => {
     res.json({ ok: true });
   });
+  app.use("/api/demo-gate", limiter(20), demoGateRouter);
   app.use("/api/masters", mastersRouter);
   app.use("/api/otp", limiter(10), otpRouter);
   app.use("/api/registrations", limiter(20), registrationsRouter);

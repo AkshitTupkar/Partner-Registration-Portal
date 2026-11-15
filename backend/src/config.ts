@@ -15,6 +15,9 @@ const EnvSchema = z.object({
   STATIC_DIR: z.string().default(""),
   /** Number of reverse proxies in front of the API (1 on Render, Railway and similar). Rate limits need it to see the visitor's IP. */
   TRUST_PROXY: z.coerce.number().int().nonnegative().default(0),
+  /** Demo gate (routes/demo-gate.ts): both set → the site asks for this email and password first. Not authentication. */
+  DEMO_GATE_EMAIL: z.string().default(""),
+  DEMO_GATE_PASSWORD: z.string().default(""),
   /** Serves /api/internal/* (lead list and detail for the CRM). No auth yet: dev only. */
   INTERNAL_API_ENABLED: z
     .enum(["true", "false"])

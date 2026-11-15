@@ -127,6 +127,16 @@ export const en = {
     ],
     more: "More questions? Our team will answer them when they call you after you register.",
   },
+  demoGate: {
+    title: "Partner onboarding demo",
+    subtitle: "Sign in to open this demo.",
+    emailLabel: "Email",
+    passwordLabel: "Password",
+    submit: "Continue",
+    checking: "Checking…",
+    required: "Enter the email and password.",
+    denied: "That email and password don't match.",
+  },
   footer: {
     tagline: "Service partner programme",
     website: "atomberg.com",

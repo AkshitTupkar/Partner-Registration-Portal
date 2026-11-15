@@ -1,0 +1,11 @@
+/* ---- Demo gate ----------------------------------------------------------- */
+/* Sign-in screen in front of a hosted demo (components/demo-gate). Reuses the
+   registration card (.po-reg), centred on the page. */
+.po-gate { min-height: 100vh; background: var(--at-paper); }
+.po-gate__main {
+  min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 28px; padding: 32px 16px;
+}
+.po-gate__wordmark { width: 144px; height: auto; }
+.po-gate__card.at-card { width: 100%; max-width: 380px; margin-top: 28px; }
+.po-gate__subtitle { margin: 6px 0 0; }
