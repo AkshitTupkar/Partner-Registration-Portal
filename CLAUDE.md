@@ -4,7 +4,7 @@ Guidance for Claude Code when working in this repository.
 
 ## Project
 
-**partnerOnboarding**: Atomberg's partner onboarding, built from the BRD in `documentation/BRD_Partner_Onboarding.md`. So far only step S1 is built: the public self-registration site (FR-01). See `documentation/fr-01-self-registration.md`. A dev-only read API (`/api/internal/leads`) also serves leads and their status history to atlas-frontend's onboarding pages; see `documentation/onboarding-internal-api.md`.
+**partnerOnboarding**: Atomberg's partner onboarding, built from the BRD in `documentation/BRD_Partner_Onboarding.md`. So far only step S1 is built: the public self-registration site (FR-01). See `documentation/fr-01-self-registration.md`. A read API (`/api/internal/leads`) also serves leads and their status history to atlas-frontend's onboarding pages, behind Atlas's Cognito sign-in (`backend/src/lib/cognito-auth.ts`); see `documentation/onboarding-internal-api.md`.
 
 The frontend and backend are separate npm projects with no shared code. Validation rules live in both `backend/src/lib/validation.ts`, which is authoritative, and `frontend/src/lib/validation.ts`. Change them together.
 

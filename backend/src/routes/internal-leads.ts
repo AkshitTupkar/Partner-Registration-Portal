@@ -5,8 +5,9 @@ import { prisma } from "../db.js";
 import { HttpError } from "../lib/errors.js";
 
 // Internal read API for the CRM's onboarding screens (atlas-frontend). Mounted only
-// when INTERNAL_API_ENABLED is on, which config.ts refuses in production: there is
-// no authentication here yet. Returns raw Partner Status Master codes (BRD Section
+// when INTERNAL_API_ENABLED is on and Cognito is configured, behind
+// requireAtlasStaff (lib/cognito-auth.ts): callers need an Atlas access token in an
+// onboarding group. Returns raw Partner Status Master codes (BRD Section
 // 12); the CRM owns their labels and step mapping.
 // Contract: documentation/onboarding-internal-api.md.
 

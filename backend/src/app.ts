@@ -3,7 +3,8 @@ import cors from "cors";
 import express from "express";
 import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
-import { config } from "./config.js";
+import { config, internalApiActive } from "./config.js";
+import { requireAtlasStaff } from "./lib/cognito-auth.js";
 import { errorHandler, notFound } from "./lib/errors.js";
 import { mastersRouter } from "./routes/masters.js";
 import { otpRouter } from "./routes/otp.js";
@@ -41,8 +42,8 @@ export function createApp() {
   app.use("/api/masters", mastersRouter);
   app.use("/api/otp", limiter(10), otpRouter);
   app.use("/api/registrations", limiter(20), registrationsRouter);
-  // Dev-only read API for the CRM; see INTERNAL_API_ENABLED in config.ts.
-  if (config.INTERNAL_API_ENABLED) app.use("/api/internal/leads", internalLeadsRouter);
+  // Read API for the CRM, behind Atlas sign-in; see internalApiActive in config.ts.
+  if (internalApiActive) app.use("/api/internal/leads", requireAtlasStaff, internalLeadsRouter);
 
   // Single-service deploys: serve the built registration site next to the API.
   // Unknown /api paths still fall through to the JSON 404 below.
